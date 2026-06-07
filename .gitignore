@@ -53,3 +53,9 @@ build/
 *.xcarchive
 *.dSYM
 
+# Local caches and generated demo media
+.swift-module-cache/
+.derivedData/
+frames/
+brain-nas-demo.mov
+tools/

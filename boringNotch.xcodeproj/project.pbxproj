@@ -147,6 +147,8 @@
 		C0DE00072F01000000000007 /* AIQuotaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00062F01000000000006 /* AIQuotaView.swift */; };
 		C0DE00092F01000000000009 /* QuotaCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00082F01000000000008 /* QuotaCardView.swift */; };
 		C0DE000B2F0100000000000B /* QuotaProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE000A2F0100000000000A /* QuotaProgressBar.swift */; };
+		C0DE00122F02000000000012 /* ScratchpadStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00102F02000000000010 /* ScratchpadStore.swift */; };
+		C0DE00132F02000000000013 /* ScratchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00112F02000000000011 /* ScratchpadView.swift */; };
 		F38DE6482D8243E7008B5C6D /* BatteryActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -318,6 +320,8 @@
 		C0DE00062F01000000000006 /* AIQuotaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIQuotaView.swift; sourceTree = "<group>"; };
 		C0DE00082F01000000000008 /* QuotaCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaCardView.swift; sourceTree = "<group>"; };
 		C0DE000A2F0100000000000A /* QuotaProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaProgressBar.swift; sourceTree = "<group>"; };
+		C0DE00102F02000000000010 /* ScratchpadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScratchpadStore.swift; sourceTree = "<group>"; };
+		C0DE00112F02000000000011 /* ScratchpadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScratchpadView.swift; sourceTree = "<group>"; };
 		F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryActivityManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -500,6 +504,7 @@
 				B1C448992C97375A001F0858 /* Tips */,
 				14C08BB72C8DE49E000F8AA0 /* Calendar */,
 				C0DE00052F01000000000005 /* AIQuota */,
+				C0DE00142F02000000000014 /* Scratchpad */,
 				9A987A042C73CA66005CA465 /* Shelf */,
 				149E0B982C737D26006418B1 /* Webcam */,
 				B18654312C6F45AE000B926A /* Live activities */,
@@ -558,6 +563,15 @@
 				C0DE000A2F0100000000000A /* QuotaProgressBar.swift */,
 			);
 			path = AIQuota;
+			sourceTree = "<group>";
+		};
+		C0DE00142F02000000000014 /* Scratchpad */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE00102F02000000000010 /* ScratchpadStore.swift */,
+				C0DE00112F02000000000011 /* ScratchpadView.swift */,
+			);
+			path = Scratchpad;
 			sourceTree = "<group>";
 		};
 		14CEF4092C5CAED200855D72 = {
@@ -934,6 +948,8 @@
 				C0DE00072F01000000000007 /* AIQuotaView.swift in Sources */,
 				C0DE00092F01000000000009 /* QuotaCardView.swift in Sources */,
 				C0DE000B2F0100000000000B /* QuotaProgressBar.swift in Sources */,
+				C0DE00122F02000000000012 /* ScratchpadStore.swift in Sources */,
+				C0DE00132F02000000000013 /* ScratchpadView.swift in Sources */,
 				14C08BB92C8DE4B1000F8AA0 /* BoringCalendar.swift in Sources */,
 				5955950D2E900ED800C66711 /* ApplicationRelauncher.swift in Sources */,
 				1100292A2E8691B400035A57 /* FileShareView.swift in Sources */,

@@ -31,6 +31,7 @@ class BoringViewModel: NSObject, ObservableObject {
     @Published var edgeAutoOpenActive: Bool = false
     @Published var isHoveringCalendar: Bool = false
     @Published var isBatteryPopoverActive: Bool = false
+    @Published var isScratchpadEditing: Bool = false
 
     @Published var screenUUID: String?
 
@@ -199,13 +200,14 @@ class BoringViewModel: NSObject, ObservableObject {
 
     func close() {
         // Do not close while a share picker or sharing service is active
-        if SharingStateManager.shared.preventNotchClose {
+        if SharingStateManager.shared.preventNotchClose || (isScratchpadEditing && isMouseHovering()) {
             return
         }
         self.notchSize = getClosedNotchSize(screenUUID: self.screenUUID)
         self.closedNotchSize = self.notchSize
         self.notchState = .closed
         self.isBatteryPopoverActive = false
+        self.isScratchpadEditing = false
         self.coordinator.sneakPeek.show = false
         self.edgeAutoOpenActive = false
 

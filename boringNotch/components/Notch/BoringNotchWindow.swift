@@ -8,6 +8,8 @@
 import Cocoa
 
 class BoringNotchWindow: NSPanel {
+    var allowsKeyFocus = false
+
     override init(
         contentRect: NSRect,
         styleMask: NSWindow.StyleMask,
@@ -41,10 +43,10 @@ class BoringNotchWindow: NSPanel {
     }
     
     override var canBecomeKey: Bool {
-        false
+        allowsKeyFocus
     }
     
     override var canBecomeMain: Bool {
-        false
+        allowsKeyFocus
     }
 }
