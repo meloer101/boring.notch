@@ -5205,6 +5205,9 @@
         }
       }
     },
+    "Clear scratchpad" : {
+
+    },
     "Clear slot" : {
       "localizations" : {
         "ar" : {
@@ -6104,6 +6107,9 @@
           }
         }
       }
+    },
+    "Copy scratchpad" : {
+
     },
     "Corner radius scaling" : {
       "localizations" : {
@@ -16116,6 +16122,9 @@
         }
       }
     },
+    "Paste or type temporary text..." : {
+
+    },
     "Pick a Color" : {
       "localizations" : {
         "ar" : {
@@ -18126,6 +18135,9 @@
           }
         }
       }
+    },
+    "Scratchpad" : {
+
     },
     "Select the music source you want to use. You can change this later in the app settings." : {
       "localizations" : {
@@ -22132,6 +22144,9 @@
           }
         }
       }
+    },
+    "Updated %@ ago" : {
+
     },
     "Upgrade to Pro" : {
       "localizations" : {

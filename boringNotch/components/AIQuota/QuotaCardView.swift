@@ -11,25 +11,28 @@ struct QuotaCardView: View {
     let isLoading: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            header
+        TimelineView(.periodic(from: .now, by: 1)) { timeline in
+            VStack(alignment: .leading, spacing: 8) {
+                header
 
-            if isLoading && result == nil {
-                loadingState
-            } else if let result, result.success {
-                quotaRows(result.tiers)
-                resetText(result.tiers)
-            } else {
-                statusState(result)
+                if isLoading && result == nil {
+                    loadingState
+                } else if let result, result.success {
+                    quotaRows(result.tiers)
+                    resetText(result.tiers, now: timeline.date)
+                    updatedText(result, now: timeline.date)
+                } else {
+                    statusState(result, now: timeline.date)
+                }
             }
+            .padding(10)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(Color.white.opacity(0.07), in: RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            )
         }
-        .padding(10)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color.white.opacity(0.07), in: RoundedRectangle(cornerRadius: 8))
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-        )
     }
 
     private var header: some View {
@@ -91,9 +94,9 @@ struct QuotaCardView: View {
     }
 
     @ViewBuilder
-    private func resetText(_ tiers: [QuotaTier]) -> some View {
-        if let nextReset = tiers.compactMap(\.resetsAt).filter({ $0 > Date() }).min() {
-            Text("Resets in \(relativeResetTime(nextReset))")
+    private func resetText(_ tiers: [QuotaTier], now: Date) -> some View {
+        if let nextReset = tiers.compactMap(\.resetsAt).filter({ $0 > now }).min() {
+            Text("Resets in \(relativeResetTime(nextReset, now: now))")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
@@ -105,7 +108,7 @@ struct QuotaCardView: View {
         }
     }
 
-    private func statusState(_ result: AIQuotaResult?) -> some View {
+    private func statusState(_ result: AIQuotaResult?, now: Date) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Spacer(minLength: 12)
             Text(statusTitle(result))
@@ -116,7 +119,20 @@ struct QuotaCardView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
+            updatedText(result, now: now)
             Spacer(minLength: 0)
+        }
+    }
+
+    @ViewBuilder
+    private func updatedText(_ result: AIQuotaResult?, now: Date) -> some View {
+        if let queriedAt = result?.queriedAt {
+            Text("Updated \(relativeUpdateTime(queriedAt, now: now))")
+                .font(.caption2)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary.opacity(0.55))
+                .lineLimit(1)
+                .monospacedDigit()
         }
     }
 
@@ -135,8 +151,24 @@ struct QuotaCardView: View {
         }
     }
 
-    private func relativeResetTime(_ date: Date) -> String {
-        Self.resetFormatter.string(from: Date(), to: date) ?? "--"
+    private func relativeResetTime(_ date: Date, now: Date) -> String {
+        Self.resetFormatter.string(from: now, to: date) ?? "--"
+    }
+
+    private func relativeUpdateTime(_ date: Date, now: Date) -> String {
+        let seconds = max(0, Int(now.timeIntervalSince(date)))
+        switch seconds {
+        case 0..<1:
+            return "now"
+        case 1..<60:
+            return "\(seconds)s ago"
+        case 60..<3_600:
+            return "\(seconds / 60)m ago"
+        case 3_600..<86_400:
+            return "\(seconds / 3_600)h ago"
+        default:
+            return "\(seconds / 86_400)d ago"
+        }
     }
 
     private func statusTitle(_ result: AIQuotaResult?) -> String {

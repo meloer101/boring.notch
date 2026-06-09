@@ -27,6 +27,7 @@ struct TabSelectionView: View {
         if Defaults[.showAIQuota] {
             items.append(TabModel(label: "AI", icon: "chart.bar.fill", view: .quota))
         }
+        items.append(TabModel(label: "Scratchpad", icon: "text.alignleft", view: .scratchpad))
         return items
     }
 

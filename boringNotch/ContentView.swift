@@ -26,6 +26,7 @@ struct ContentView: View {
     @State private var hoverTask: Task<Void, Never>?
     @State private var isHovering: Bool = false
     @State private var anyDropDebounceTask: Task<Void, Never>?
+    @State private var scratchpadMouseMonitorTask: Task<Void, Never>?
 
     @State private var gestureProgress: CGFloat = .zero
 
@@ -56,6 +57,10 @@ struct ContentView: View {
                 ? cornerRadiusInsets.opened.bottom
                 : cornerRadiusInsets.closed.bottom
         )
+    }
+
+    private var preventsAutomaticClose: Bool {
+        SharingStateManager.shared.preventNotchClose || (vm.isScratchpadEditing && vm.isMouseHovering())
     }
 
     private var computedChinWidth: CGFloat {
@@ -153,7 +158,7 @@ struct ContentView: View {
                                 try? await Task.sleep(for: .milliseconds(100))
                                 guard !Task.isCancelled else { return }
                                 await MainActor.run {
-                                    if self.vm.notchState == .open && !self.isHovering && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
+                                    if self.vm.notchState == .open && !self.isHovering && !self.vm.isBatteryPopoverActive && !self.preventsAutomaticClose {
                                         self.vm.close()
                                     }
                                 }
@@ -168,13 +173,13 @@ struct ContentView: View {
                         }
                     }
                     .onChange(of: vm.isBatteryPopoverActive) {
-                        if !vm.isBatteryPopoverActive && !isHovering && vm.notchState == .open && !SharingStateManager.shared.preventNotchClose {
+                        if !vm.isBatteryPopoverActive && !isHovering && vm.notchState == .open && !preventsAutomaticClose {
                             hoverTask?.cancel()
                             hoverTask = Task {
                                 try? await Task.sleep(for: .milliseconds(100))
                                 guard !Task.isCancelled else { return }
                                 await MainActor.run {
-                                    if !self.vm.isBatteryPopoverActive && !self.isHovering && self.vm.notchState == .open && !SharingStateManager.shared.preventNotchClose {
+                                    if !self.vm.isBatteryPopoverActive && !self.isHovering && self.vm.notchState == .open && !self.preventsAutomaticClose {
                                         self.vm.close()
                                     }
                                 }
@@ -235,10 +240,17 @@ struct ContentView: View {
                 }
 
                 vm.dropEvent = false
-                if !SharingStateManager.shared.preventNotchClose {
+                if !preventsAutomaticClose {
                     vm.close()
                 }
             }
+        }
+        .onChange(of: vm.isScratchpadEditing) { _, isEditing in
+            updateScratchpadMouseMonitor(isEditing: isEditing)
+        }
+        .onDisappear {
+            scratchpadMouseMonitorTask?.cancel()
+            scratchpadMouseMonitorTask = nil
         }
     }
 
@@ -351,6 +363,8 @@ struct ContentView: View {
                         ShelfView()
                     case .quota:
                         AIQuotaView()
+                    case .scratchpad:
+                        ScratchpadView()
                     }
                 }
                 .transition(
@@ -510,6 +524,28 @@ struct ContentView: View {
         }
     }
 
+    private func updateScratchpadMouseMonitor(isEditing: Bool) {
+        scratchpadMouseMonitorTask?.cancel()
+        scratchpadMouseMonitorTask = nil
+
+        guard isEditing else { return }
+
+        scratchpadMouseMonitorTask = Task { @MainActor in
+            while !Task.isCancelled && vm.isScratchpadEditing {
+                try? await Task.sleep(for: .milliseconds(120))
+                guard !Task.isCancelled else { return }
+
+                guard vm.notchState == .open,
+                      coordinator.currentView == .scratchpad,
+                      !vm.isMouseHovering() else { continue }
+
+                vm.isScratchpadEditing = false
+                vm.close()
+                return
+            }
+        }
+    }
+
     // MARK: - Hover Management
 
     private func handleHover(_ hovering: Bool) {
@@ -551,7 +587,7 @@ struct ContentView: View {
                         self.isHovering = false
                     }
                     
-                    if self.vm.notchState == .open && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
+                    if self.vm.notchState == .open && !self.vm.isBatteryPopoverActive && !self.preventsAutomaticClose {
                         self.vm.close()
                     }
                 }
@@ -601,7 +637,7 @@ struct ContentView: View {
             withAnimation(animationSpring) {
                 isHovering = false
             }
-            if !SharingStateManager.shared.preventNotchClose { 
+            if !preventsAutomaticClose {
                 gestureProgress = .zero
                 vm.close()
             }
